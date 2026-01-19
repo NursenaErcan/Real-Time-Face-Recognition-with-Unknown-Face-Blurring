@@ -1,114 +1,171 @@
-Face Detection Project (Images & Video)
+🎥 Real-Time Face Recognition with Unknown Face Blurring
 
-This project demonstrates face detection on images and videos using two popular approaches:
+This project implements a real-time face recognition system using MTCNN for face detection and FaceNet (InceptionResnetV1) for face recognition.
+Recognized faces are labeled, while unknown faces are automatically blurred for privacy.
 
-Haar Cascade (OpenCV)
+The system also includes temporal stability, ensuring that identities are only confirmed after appearing consistently across multiple frames.
 
-MTCNN (Multi-Task Cascaded Convolutional Neural Network)
+🚀 Features
 
-The system processes multiple images and a classroom video, detects faces, and visualizes bounding boxes (and facial keypoints for MTCNN).
+✅ Real-time webcam face detection
 
-📁 Dataset
+✅ Face recognition using deep embeddings
 
-The dataset consists of:
+✅ Unknown faces are blurred (privacy-first)
 
-Portrait images with single faces
+✅ Temporal voting to prevent flickering labels
 
-A group photo with multiple faces
+✅ Supports multiple known identities
 
-A classroom video containing multiple people
+✅ CPU & GPU compatible (PyTorch)
 
-Supported formats:
+🧠 Technologies Used
 
-Images: .jpg, .png, .jpeg
+Python 3.9+
 
-Videos: .mp4, .avi, .mov
+OpenCV
 
-🧠 Methods Used
-1. Haar Cascade (OpenCV)
+PyTorch
 
-Classical machine-learning approach
-
-Fast and lightweight
-
-Uses grayscale images
-
-Best suited for frontal faces
-
-Implemented in:
-
-face_detection_haarcascade.py 
-
-face_detection_haarcascade
-
-Features
-
-Face detection on images with red bounding boxes
-
-Real-time face detection on video streams
-
-ESC key to stop video processing
-
-2. MTCNN
-
-Deep-learning-based approach
-
-More accurate and robust
-
-Detects facial landmarks (eyes, nose, mouth)
-
-Implemented in:
-
-face_detection_mtcnn.py 
-
-face_detection_mtcnn
-
-Features
-
-Face bounding boxes
-
-Facial keypoint visualization
-
-Image and video support
-
-Better performance on multiple faces and varying angles
-
-🛠️ Requirements
-
-Install the required dependencies:
-
-pip install opencv-python numpy pillow matplotlib mtcnn scikit-image
-
-
-⚠️ MTCNN may require TensorFlow depending on your environment.
-
-▶️ How to Run
-Haar Cascade
-python face_detection_haarcascade.py
+facenet-pytorch
 
 MTCNN
-python face_detection_mtcnn.py
+
+InceptionResnetV1 (VGGFace2 pretrained)
+
+NumPy
+
+PIL (Pillow)
+
+📂 Project Structure
+visionprojesi/
+│
+├── realtime_mtcnn_recognize_blur.py
+├── known_faces/
+│   ├── tarkan.jpg
+│   ├── alice.png
+│   └── bob.jpeg
+│
+├── venv/
+└── README.md
 
 
-Both scripts automatically process:
+known_faces/
+Contains reference images of known people.
+File name = person name (underscores allowed).
 
-All images in the dataset
+🖼️ How It Works
 
-The classroom video
+Face Detection
 
-📊 Output
-Image Processing
+MTCNN detects all faces in each webcam frame.
 
-Displays detected faces with bounding boxes
+Face Embedding
 
-MTCNN additionally shows facial keypoints
+Each detected face is resized to 160×160
 
-Video Processing
+A 512-D embedding is extracted using FaceNet.
 
-Live video window with face detection
+Recognition
 
-Press ESC to exit
+Cosine distance is computed against known embeddings.
 
-License
+If distance < threshold → known face
 
-This project is for educational and research purposes.
+Otherwise → unknown face
+
+Temporal Stability
+
+Identity must appear consistently across multiple frames.
+
+Prevents false positives and flickering labels.
+
+Privacy Protection
+
+Unknown faces are blurred in real time.
+
+⚙️ Installation
+1️⃣ Create Virtual Environment (Recommended)
+python -m venv venv
+
+
+Activate:
+
+Windows
+
+venv\Scripts\activate
+
+
+Linux / macOS
+
+source venv/bin/activate
+
+2️⃣ Install Dependencies
+pip install torch torchvision torchaudio
+pip install opencv-python facenet-pytorch pillow numpy
+
+
+⚠️ If you have CUDA installed, PyTorch will automatically use GPU.
+
+▶️ Running the Project
+python realtime_mtcnn_recognize_blur.py
+
+
+Press q to quit
+
+Webcam must be connected
+
+Console will show loaded known identities
+
+🧪 Configuration
+
+You can adjust these values inside the script:
+
+KNOWN_THRESHOLD = 0.72     # Lower = stricter matching
+STABILITY_FRAMES = 7      # Frames required for stable identity
+BLUR_KERNEL = (45, 45)    # Blur strength
+
+🧩 Adding Known Faces
+
+Add an image to known_faces/
+
+Name the file after the person:
+
+john_doe.jpg  →  John Doe
+
+
+Restart the program
+
+❗ Common Issues
+❌ Webcam Not Opening
+
+Check CAMERA_INDEX = 0
+
+Try 1 or 2 if multiple cameras exist
+
+❌ torch.cat(): expected a non-empty list of Tensors
+
+✔ Already fixed in this version
+This project uses MTCNN only once per frame, preventing this error.
+
+🔒 Privacy & Ethics
+
+Unknown individuals are never identified
+
+Faces are anonymized via blurring
+
+No data is stored or transmitted
+
+This makes the system suitable for GDPR-aware applications.
+
+🛠️ Possible Improvements
+
+FPS optimization
+
+Face tracking (Kalman / SORT)
+
+ArcFace or AdaFace embeddings
+
+Mask / sunglasses robustness
+
+Face database persistence
